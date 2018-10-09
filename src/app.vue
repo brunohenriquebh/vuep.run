@@ -1,6 +1,6 @@
 <template>
   <section class="app">
-    <nav class="navbar">
+    <nav v-if="false" class="navbar">
       <span>Vuep.run</span>
 
       <ul class="list">
@@ -12,11 +12,42 @@
     </nav>
 
     <main class="main">
-      <editor class="panel" @change="changeHtml" mode="html"></editor>
-        <editor class="panel" @change="changeJs"  mode="js"></editor>
-          <editor class="panel" @change="changeCss"  mode="css"></editor>
+    <grid-layout
+             :layout="layout"
+            :col-num="12"
+            :row-height="100"
+            :is-draggable="true"
+            :is-resizable="true"
+            :is-mirrored="false"
+            :vertical-compact="false"
+            :margin="[10, 10]"
+            :use-css-transforms="false"
+    >
+     <grid-item v-for="item in layout"
+                   :x="item.x"
+                   :y="item.y"
+                   :w="item.w"
+                   :h="item.h"
+                   :i="item.i" 
+                   :key="item.i"
+                    >
+                   <editor v-if="item['bindMethod'] != null"  class="panel" v-bind:data="item" @change="item['bindMethod']" :mode="item.mode"></editor>
+                   <preview  v-if="item['bindMethod'] == null"  :value="preview" class="panel"></preview>
+        </grid-item>
 
-      <preview :value="preview" class="panel"></preview>
+
+  
+   
+
+    </grid-layout>
+
+      <div class="row">
+
+          </div>
+           <div class="row">
+
+   
+           </div>
     </main>
   </section>
 </template>
@@ -31,6 +62,7 @@ import getPkgs from '@/utils/get-pkgs';
 import isAbsouteUrl from 'is-absolute-url';
 import { upload } from '@/utils/store';
 import * as params from '@/utils/params';
+import VueGridLayout from 'vue-grid-layout';
 
 const CDN_MAP = {
   unpkg: '//unpkg.com/',
@@ -38,9 +70,18 @@ const CDN_MAP = {
 };
 
 export default {
+  name: 'vuep',
   components: {
     Editor,
     Preview
+  },
+  mounted(){
+      this.layout = [   
+        {"x":0,"y":3,"w":5,"h":2,"i":"0", "bindMethod": this.changeHtml, "mode": "html"},
+	    {"x":5,"y":3,"w":5,"h":2,"i":"1", "bindMethod": this.changeJs, "mode": "js"},
+	    {"x":10,"y":3,"w":2,"h":2,"i":"2", "bindMethod": this.changeCss, "mode": "css"},
+        {"x":0,"y":0,"w":12,"h":3,"i":"3", "bindMethod": null, "mode": "preview"},
+      ]
   },
 
   data: () => ({
@@ -48,7 +89,11 @@ export default {
     code: '',
     code_html : ' <div> Hello Word </div>',
     code_js: ' exports = { default: {} }',
-    code_css: 'p {color: #ccc}'
+    code_css: 'p {color: #ccc}',
+    layout: [
+
+     // {"x":4,"y":0,"w":2,"h":5,"i":"3", bindMethod: null}
+    ]
   }),
 
   methods: {
@@ -185,51 +230,18 @@ export default {
 </script>
 
 <style src="modern-normalize"></style>
-<style lang="stylus" scoped>
-.navbar
-  height 50px
-  border-bottom 3px solid #f0f0f0
-  line-height 50px
-  font-size 20px
-  padding 0 20px
-  display flex
-  color #2c3e50
-  align-items center
-
-.list
-  list-style none
-  padding 0
-  margin 0 0 0 20px
-
-  a
-    text-decoration none
-    color #999
-    font-size 16px
-
-.save
-  border-radius 4px
-  color #fff
-  border none
-  font-size 14px
-  height 30px
-  background #42b983
-  border-bottom 2px solid #349469
-  position absolute
-  right 20px
-  outline none
-
-  &:hover
-    opacity 0.8
-
-  &:active
-    background #349469
+<style lang="stylus">
 
 .main
   display flex
-  height calc(100vh - 50px)
 
-.panel
-  width 33%
-.preview
-  width 100%
+.vue-grid-layout
+ width: 100%;
+
+ .panel
+   height: 100%;
+ 
+
+
+
 </style>

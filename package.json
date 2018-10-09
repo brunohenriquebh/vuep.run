@@ -3,6 +3,8 @@
   "productName": "Vuep.run - An online playground for Vue",
   "version": "1.0.0",
   "private": true,
+  "main": "dist/vuep.common.js",
+  "unpkg": "dist/vuep.js",
   "description": "🏃 An online playground for Vue",
   "main": "src/main.js",
   "scripts": {
@@ -43,6 +45,7 @@
     "throttle-debounce": "^1.0.1",
     "unfetch": "^3.0.0",
     "vue": "^2.5.16",
+    "vue-grid-layout": "^2.2.0",
     "vue-template-compiler": "^2.5.16",
     "vue-toasted": "^1.1.24"
   },

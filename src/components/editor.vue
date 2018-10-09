@@ -1,5 +1,5 @@
 <template>
-  <div class="editor">
+  <div class="editor col-xl-4">
     <textarea ref="textarea" class="editor">
     </textarea>
   </div>
@@ -135,6 +135,7 @@ export default {
         Enter: 'emmetInsertLineBreak'
       }
     });
+    editor.setSize("100%", "calc(100% - 32px)");
 
     editor.on(
       'change',

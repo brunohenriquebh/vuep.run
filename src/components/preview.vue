@@ -1,5 +1,5 @@
 <template>
-  <div class="preview">
+  <div class="preview col-xl-12">
     <div ref="iframe"></div>
   </div>
 </template>
