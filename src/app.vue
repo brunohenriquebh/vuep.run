@@ -12,7 +12,10 @@
     </nav>
 
     <main class="main">
-      <editor class="panel" @change="compile"></editor>
+      <editor class="panel" @change="changeHtml" mode="html"></editor>
+        <editor class="panel" @change="changeJs"  mode="js"></editor>
+          <editor class="panel" @change="changeCss"  mode="css"></editor>
+
       <preview :value="preview" class="panel"></preview>
     </main>
   </section>
@@ -42,18 +45,37 @@ export default {
 
   data: () => ({
     preview: '',
-    code: ''
+    code: '',
+    code_html : ' <div> Hello Word </div>',
+    code_js: ' exports = { default: {} }',
+    code_css: 'p {color: #ccc}'
   }),
 
   methods: {
-    async compile(code) {
-      this.code = code;
+      async changeHtml(code) {
+        this.code_html = code;
+        this.compile();
 
-      if (!code) {
+      },
+      async changeCss(code) {
+        this.code_css = code;
+        this.compile();
+
+      },
+      async changeJs(code) {
+        this.code_js = code;
+        this.compile();
+
+      },
+    async compile() {
+  
+      this.code =  '<template>\n'+ this.code_html + '\n<\/template> \n <script>\n'+ this.code_js +'\n<\/script> \n<style>\n'+ this.code_css +'\n<\/style> ';
+   
+      if (!this.code ) {
         return;
       }
       const imports = [];
-      const { template, script, styles, customBlocks } = parseComponent(code);
+      const { template, script, styles, customBlocks } = parseComponent(this.code);
       let config;
 
       if ((config = customBlocks.find(n => n.type === 'config'))) {
@@ -207,5 +229,7 @@ export default {
   height calc(100vh - 50px)
 
 .panel
-  width 50%
+  width 33%
+.preview
+  width 100%
 </style>

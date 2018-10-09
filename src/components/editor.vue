@@ -18,8 +18,7 @@ import isAbsouteUrl from 'is-absolute-url';
 import { downloadURL } from '@/utils/store';
 
 emmet(CodeMirror);
-const defaultValue = `<template>
-  <div>
+const defaultValueHtml = `  <div>
     <h2>Hello {{ msg }}</h2>
     <h3>Demo</h3>
     <ul>
@@ -27,11 +26,9 @@ const defaultValue = `<template>
         <a target="_blank" :href="url">{{ url }}</a>
       </li>
     </ul>
-  </div>
-</template>
+  </div>`;
 
-<script>
-export default {
+const defaultValueJs = `export default {
   data: () => ({
     msg: 'Vuep.run',
 
@@ -41,24 +38,22 @@ export default {
       'https://vuep.run/vuetifyjs/vuetifyjs.com/blob/dev/examples/ripples/navigationDrawers.vue?pkg=vuetify&css=vuetify/dist/vuetify.min.css'
     ]
   })
-}
-<\/script>
+}`;
 
-<style>
-div {
+const defaultValueCss = `div {
   color: #2c3e50;
   font-family: Arial, sans-serif;
 }
 
 a {
   color: #42b983;
-}
-</style>`;
+}`;
 
 export default {
   data: () => ({
     code: ''
   }),
+  props: ['mode'],
 
   methods: {
     async getFileContent(filename) {
@@ -105,13 +100,33 @@ export default {
   },
 
   async mounted() {
+
+    var modeParams = {
+      'html': {
+        defaultValue: defaultValueHtml,
+        editorMode:"vue",
+        autofocus:false
+        }, 
+      'css': {
+        defaultValue: defaultValueCss,
+        editorMode:"css",
+        autofocus:false
+        } , 
+      'js': {
+        defaultValue: defaultValueJs,
+        editorMode:"javascript",
+        autofocus:true
+        } 
+        };
+ 
+
     const editor = CodeMirror.fromTextArea(this.$refs.textarea, {
-      mode: 'vue',
+      mode: modeParams[this.mode].editorMode,
       theme: 'lucario',
       value: `<template></template>`,
       lineNumbers: true,
       tabSize: 2,
-      autofocus: true,
+      autofocus: modeParams[this.mode].autofocus,
       line: true,
       styleActiveLine: true,
       matchBrackets: true,
@@ -132,7 +147,7 @@ export default {
     if (location.pathname !== '/') {
       value = await this.getFileContent(location.pathname.slice(1));
     }
-    value = value || defaultValue;
+    value = value || modeParams[this.mode].defaultValue;
     editor.setValue(value);
 
     this.$emit('change', editor.getValue());
